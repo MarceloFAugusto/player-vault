@@ -40,7 +40,7 @@ if (!(Get-Command pyinstaller -ErrorAction SilentlyContinue)) {
 Start-Sleep -Seconds 2
 
 # Garante que não há processos anteriores rodando
-Get-Process "valorant-ranks" -ErrorAction SilentlyContinue | Stop-Process -Force
+Get-Process "player-vault" -ErrorAction SilentlyContinue | Stop-Process -Force
 
 # Limpa builds anteriores com tempo de espera
 if (Test-Path "dist") {
@@ -80,7 +80,7 @@ pyinstaller --clean `
     --hidden-import "python-dotenv" `
     --hidden-import "beautifulsoup4" `
     --hidden-import "pydantic" `
-    --name "valorant-ranks" `
+    --name "player-vault" `
     --icon "static_min/favicon.ico" `
     --runtime-hook "runtime_hook.py" `
     --hide-console hide-early `
@@ -92,10 +92,10 @@ pyinstaller --clean `
 Start-Sleep -Seconds 2
 
 # Verifica se o executável foi gerado corretamente
-if (Test-Path "dist\valorant-ranks.exe") {
+if (Test-Path "dist\player-vault.exe") {
     Write-Host "`nBuild concluída com sucesso!" -ForegroundColor Green
     Write-Host "`nBuild concluída com sucesso!" -ForegroundColor Green
-    Write-Host "O executável foi gerado em: $((Get-Location).Path)\dist\valorant-ranks.exe" -ForegroundColor Cyan
+    Write-Host "O executável foi gerado em: $((Get-Location).Path)\dist\player-vault.exe" -ForegroundColor Cyan
 
     # Remove a pasta static_min após a build
     if (Test-Path "static_min") {

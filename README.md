@@ -87,6 +87,25 @@ python run.py
 1. Execute o arquivo valorant-ranks.exe
 2. O sistema abrirá automaticamente no navegador padrão
 
+### Testes
+
+Para testar rapidamente o sistema:
+
+1. Inicie no modo teste:
+```bash
+python app.py -test
+```
+
+2. Testes Automatizados
+
+Execute os testes usando:
+```bash
+pytest                    # Todos os testes
+pytest tests/unit/        # Apenas testes unitários
+pytest tests/integration/ # Apenas testes de integração
+pytest tests/e2e/         # Apenas testes end-to-end
+```
+
 ## 🔒 Segurança
 - Todas as senhas são criptografadas
 - 2FA via Google Authenticator
