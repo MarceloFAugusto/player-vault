@@ -13,6 +13,7 @@
 - [x] Testes unitários
 - [x] Healthcheck endpoints
 - [x] Logging configurado
+- [ ] Corrigir nomenclatura de classes com "GoogleAuthentication" para "TOTPAuthentication"
 - [ ] Refatorar código que está acoplado somente para Valorant
 - [ ] Refatorar código que está acoplado somente ao Valrank
 - [ ] Cache para consultas de rank com Redis
