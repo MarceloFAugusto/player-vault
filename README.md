@@ -1,6 +1,6 @@
-# Valorant Ranks API
+# Player Vault
 
-Sistema completo para gerenciamento e consulta de ranks de jogadores do Valorant, com interface web e recursos avançados de segurança.
+Sistema de gerenciamento de contas e consulta de ranks de jogadores (Inicialmente, somente de Valorant), com interface web e recursos de segurança.
 
 ## 🚀 Funcionalidades
 
