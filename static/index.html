@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <meta name="reporting-endpoints" content="none">
+    <!-- Adicionar novas meta tags de segurança -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:* data:">
+    <meta name="report-to" content="none">
+    <meta name="document-policy" content="no-reporting">
+    <title>Valorant Ranks</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Adicionar o script de segurança antes de todos -->
+    <script src="js/security.js"></script>
+</head>
+<body>
+    <div id="login-container" class="login-container">
+        <h2>Login</h2>
+        <form id="login-form" class="login-form" action="javascript:void(0)" autocomplete="on">
+            <div class="form-group">
+                <input type="text" 
+                       id="username" 
+                       name="username" 
+                       placeholder="Usuário" 
+                       required
+                       autocomplete="on">
+            </div>
+            <div class="form-group">
+                <input type="password" 
+                       id="password" 
+                       name="password" 
+                       placeholder="Senha" 
+                       required
+                       autocomplete="on">
+            </div>
+            <div class="form-group">
+                <input type="text" 
+                       id="2fa-code" 
+                       name="2fa-code" 
+                       placeholder="Código 2FA" 
+                       style="display: none" 
+                       maxlength="6"
+                       autocomplete="off">
+            </div>
+            <button type="button" onclick="UI.handleLogin()">Entrar</button>
+        </form>
+    </div>
+
+    <div id="content">
+        <div class="header-container">
+            <h1>Valorant Ranks</h1>
+            <div class="header-buttons">
+                <button class="refresh-button" onclick="Players.loadAllPlayers()">
+                    🔄 Atualizar
+                </button>
+                <button class="setup-2fa-button" onclick="UI.show2FASetup()">
+                    🔒 Configurar 2FA
+                </button>
+                <button class="add-player-button" onclick="UI.showAddPlayerModal()">
+                    ➕ Adicionar Jogador
+                </button>
+                <button class="add-batch-button" onclick="UI.showAddBatchModal()">
+                    📋 Adicionar em Lote
+                </button>
+                <span id="loading-message" class="loading-message"></span>
+            </div>
+        </div>
+        <div id="players-list"></div>
+        <div id="copy-feedback" class="copy-feedback"></div>
+    </div>
+
+    <div id="setup-2fa-modal" class="modal">
+        <div class="modal-content">
+            <h2>Configurar Autenticação em Duas Etapas</h2>
+            
+            <div id="setup-2fa-section">
+                <p>1. Escaneie o QR Code abaixo com seu aplicativo autenticador:</p>
+                <img id="qr-code" src="" alt="QR Code 2FA">
+                <p>Ou insira manualmente o código:</p>
+                <div id="secret-key" class="secret-key"></div>
+                
+                <div id="verify-2fa-section">
+                    <p>2. Digite o código gerado no seu aplicativo para confirmar:</p>
+                    <form id="verify-2fa-form" onsubmit="UI.verify2FASetup(event)">
+                        <input type="text" name="verification_code" 
+                               pattern="[0-9]{6}" maxlength="6" 
+                               placeholder="Digite o código de 6 dígitos"
+                               required>
+                        <button type="submit">Verificar</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="reset-2fa-section" style="display: none">
+                <p>O 2FA já está configurado para sua conta.</p>
+                <p>Para reconfigurar o 2FA, você precisará resetá-lo primeiro.</p>
+                <button onclick="UI.reset2FA()" class="danger-button">Resetar 2FA</button>
+                <p class="warning-text">Atenção: Ao resetar o 2FA, você precisará configurá-lo novamente.</p>
+            </div>
+            
+            <button onclick="UI.closeModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- Modal para Adicionar Jogador com feedback em tempo real -->
+    <div id="add-player-modal" class="modal">
+        <div class="modal-content">
+            <h2>Adicionar Novo Jogador</h2>
+            <form id="add-player-form" onsubmit="UI.submitAddPlayer(event)" autocomplete="off">
+                <div class="form-group">
+                    <input type="text" name="name" placeholder="Nome" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <input type="text" name="tag" placeholder="Tag" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" name="email" placeholder="Email" 
+                           onchange="Players.checkPlayerExists('email', this.value)"
+                           required
+                           autocomplete="off">
+                    <span id="email-feedback" class="feedback-message"></span>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="login" placeholder="Login" 
+                           onchange="Players.checkPlayerExists('login', this.value)" required>
+                    <span id="login-feedback" class="feedback-message"></span>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="Senha" required>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit">Adicionar</button>
+                    <button type="button" onclick="UI.closeAddPlayerModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Adicionar em Lote -->
+    <div id="add-batch-modal" class="modal">
+        <div class="modal-content">
+            <h2>Adicionar Jogadores em Lote</h2>
+            <form id="add-batch-form" onsubmit="UI.submitAddBatch(event)">
+                <textarea name="batch-data" 
+                          placeholder="Cole aqui o JSON com a lista de jogadores"
+                          rows="10"
+                          required></textarea>
+                <div class="modal-buttons">
+                    <button type="submit">Adicionar em Lote</button>
+                    <button type="button" onclick="UI.closeAddBatchModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Mensagem do Rank -->
+    <div id="rank-message-modal" class="modal">
+        <div class="modal-content">
+            <h2>Consulta de Rank</h2>
+            <p id="rank-message-content"></p>
+            <p><a id="rank-message-link" target="_blank" rel="noopener noreferrer"></a></p>
+            <button onclick="UI.closeModal('rank-message-modal')">Fechar</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/crypto.js" defer></script>
+    <script src="js/api.js" defer></script>
+    <script src="js/auth.js" defer></script>
+    <script src="js/ui.js" defer></script>
+    <script src="js/players.js" defer></script>
+</body>
+</html>
